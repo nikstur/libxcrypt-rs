@@ -1,0 +1,21 @@
+[workspace]
+members = [
+    "xcrypt",
+    "xcrypt-sys",
+]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+# [workspace.lints.rust]
+# unsafe_code = "forbid"
+
+[workspace.lints.clippy]
+all = { level = "deny", priority = -1 }
+pedantic = { level = "deny", priority = -1 }
+unwrap_used = { level = "deny" }
+expect_used = { level = "deny" }
+missing_errors_doc = { level = "allow" }
