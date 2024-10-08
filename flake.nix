@@ -1,5 +1,5 @@
 {
-  description = "Rust bindings to libxcrypt";
+  description = "Rust bindings for libxcrypt";
 
   inputs = {
 
