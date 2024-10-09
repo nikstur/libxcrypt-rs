@@ -5,11 +5,11 @@
 }:
 
 let
-  cargoToml = builtins.fromTOML (builtins.readFile ./Cargo.toml);
+  cargoToml = builtins.fromTOML (builtins.readFile ./xcrypt/Cargo.toml);
 in
 rustPlatform.buildRustPackage rec {
   pname = "libxcypt-rs";
-  inherit (cargoToml.workspace.package) version;
+  inherit (cargoToml.package) version;
 
   src = lib.sourceFilesBySuffices ./. [
     ".rs"
