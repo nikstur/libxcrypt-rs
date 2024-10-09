@@ -1,3 +1,25 @@
+//! Bindings for libxcrypt.
+//!
+//! # Examples
+//!
+//! Hash a phrase with the best available hashing method and default parameters:
+//!
+//! ```
+//! use xcrypt::{crypt, crypt_gensalt};
+//!
+//! let setting = crypt_gensalt(None, 0, None).unwrap();
+//! crypt("hello", &setting);
+//! ```
+//!
+//! You can also explicitly request a specific hashing method:
+//!
+//! ```
+//! use xcrypt::{crypt, crypt_gensalt};
+//!
+//! let setting = crypt_gensalt(Some("$6$"), 0, None).unwrap();
+//! crypt("hello", &setting);
+//! ```
+
 use std::{
     ffi::{CStr, CString},
     fmt, io,
