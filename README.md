@@ -17,8 +17,8 @@ use xcrypt::{crypt, crypt_gensalt};
 
 fn main() {
     let setting = crypt_gensalt(None, 0, None).unwrap();
-    let hashed_phrase = crypt("hello", &setting);
+    let hashed_phrase = crypt("hello", &setting).unwrap();
 
-    println("{hashed_phrase}");
+    println!("{hashed_phrase}");
 }
 ```
