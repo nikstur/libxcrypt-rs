@@ -9,8 +9,9 @@ pub enum Error {
     InvalidArgument(String),
     /// Input phrase is too long for specified hashing method.
     PhraseTooLong,
-    ///.
-    RandomNumbersNotAvailable,
+    /// No random number generator is available on the platform.
+    RngNotAvailable,
+    /// An unknown IO error occured.
     IoError(io::Error),
 }
 
@@ -21,11 +22,11 @@ impl fmt::Display for Error {
             Self::PhraseTooLong => {
                 write!(f, "Input phrase is too long for specified hashing method")
             }
-            Self::RandomNumbersNotAvailable => {
+            Self::RngNotAvailable => {
                 write!(f, "No random number generator is available on the platform")
             }
             Self::IoError(..) => {
-                write!(f, "An unknown error occured")
+                write!(f, "An unknown IO error occured")
             }
         }
     }
@@ -56,7 +57,7 @@ pub fn crypt_gensalt(
     random_bytes: Option<&[i8]>,
 ) -> Result<String, Error> {
     let c_prefix = prefix
-        .map(|s| CString::new(s).map_err(|_| Error::invalid_argument("Prefix contains NUL byte")))
+        .map(|s| CString::new(s).map_err(|_| Error::invalid_argument("Prefix contains NULL byte")))
         .transpose()?;
     let c_prefix_ptr = match &c_prefix {
         Some(cs) => cs.as_ptr(),
@@ -95,7 +96,7 @@ pub fn crypt_gensalt(
             if errno > 0 {
                 let error = match errno {
                     22 /* EINVAL */  => Error::invalid_argument("Invalid prefix, count, or random_bytes"),
-                    88 /* ENOSYS */ | 13 /* ENOSYS */ | 5 /* EIO */ => Error::RandomNumbersNotAvailable,
+                    88 /* ENOSYS */ | 13 /* ENOSYS */ | 5 /* EIO */ => Error::RngNotAvailable,
                     _ => Error::IoError(last_os_error),
                 };
                 return Err(error);
@@ -124,9 +125,9 @@ pub fn crypt(phrase: &str, setting: &str) -> Result<String, Error> {
     };
 
     let c_phrase =
-        CString::new(phrase).map_err(|_| Error::invalid_argument("Phrase contains NUL byte"))?;
+        CString::new(phrase).map_err(|_| Error::invalid_argument("Phrase contains NULL byte"))?;
     let c_setting =
-        CString::new(setting).map_err(|_| Error::invalid_argument("Setting contains NUL byte"))?;
+        CString::new(setting).map_err(|_| Error::invalid_argument("Setting contains NULL byte"))?;
 
     let c_hashed_phrase = unsafe {
         let hashed_phrase_ptr =
@@ -174,7 +175,7 @@ mod tests {
     fn gensalt_and_crypt() -> Result<()> {
         let strong_hashing_methods = [
             "$y$", "$gy$",
-            // Somehow crypt_r returns OOM for scrypt, which it really shouldn't
+            // Somehow crypt_r returns ENOMEM for scrypt, which it really shouldn't
             // "$7$",
             "$2b$", "$6$",
         ];
