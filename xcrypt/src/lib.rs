@@ -118,7 +118,7 @@ pub fn crypt_gensalt(
             if errno > 0 {
                 let error = match errno {
                     22 /* EINVAL */  => Error::invalid_argument("Invalid prefix, count, or random_bytes"),
-                    88 /* ENOSYS */ | 13 /* ENOSYS */ | 5 /* EIO */ => Error::RngNotAvailable,
+                    88 /* ENOSYS */ | 13 /* EACCESS */ | 5 /* EIO */ => Error::RngNotAvailable,
                     _ => Error::IoError(last_os_error),
                 };
                 return Err(error);
