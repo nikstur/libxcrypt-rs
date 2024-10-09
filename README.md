@@ -10,6 +10,8 @@ Add `xcrypt` to your `Cargo.toml`:
 cargo add xcrypt
 ```
 
+Hash a phrase with the best available hashing method and default parameters:
+
 ```rust
 use xcrypt::{crypt, crypt_gensalt};
 
