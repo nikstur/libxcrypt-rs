@@ -1,12 +1,12 @@
 [package]
 name = "xcrypt-sys"
+description = "Low-level bindings for libxcrypt"
 version.workspace = true
 license.workspace = true
 edition.workspace = true
-description = "Low-level bindings for libxcrypt"
-homepage = "https://github.com/nikstur/libcxcrypt-rs"
-repository = "https://github.com/nikstur/libcxcrypt-rs"
-readme = "README.md"
+homepage.workspace = true
+repository.workspace = true
+readme.workspace = true
 
 [build-dependencies]
 bindgen = "0.70.1"

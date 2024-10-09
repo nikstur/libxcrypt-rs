@@ -9,9 +9,9 @@ resolver = "2"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
-
-# [workspace.lints.rust]
-# unsafe_code = "forbid"
+homepage = "https://github.com/nikstur/libcxcrypt-rs"
+repository = "https://github.com/nikstur/libcxcrypt-rs"
+readme = "README.md"
 
 [workspace.lints.clippy]
 all = { level = "deny", priority = -1 }
