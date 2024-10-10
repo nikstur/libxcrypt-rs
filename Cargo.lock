@@ -282,14 +282,7 @@ checksum = "589f6da84c646204747d1270a2a5661ea66ed1cced2631d546fdfb155959f9ec"
 name = "xcrypt"
 version = "0.1.0"
 dependencies = [
- "xcrypt-sys 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
-name = "xcrypt-sys"
-version = "0.1.0"
-dependencies = [
- "bindgen",
+ "xcrypt-sys 0.1.0",
 ]
 
 [[package]]
@@ -297,6 +290,13 @@ name = "xcrypt-sys"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "70a680fd3038d10ef74bbd3e67c184ae4d51d043250723fae415a21a49b96e75"
+dependencies = [
+ "bindgen",
+]
+
+[[package]]
+name = "xcrypt-sys"
+version = "0.2.0"
 dependencies = [
  "bindgen",
 ]
