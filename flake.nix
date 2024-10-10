@@ -51,6 +51,7 @@
           packages = {
             libxcrypt-rs = pkgs.callPackage ./build.nix { };
             default = config.packages.libxcrypt-rs;
+            cross = pkgs.pkgsCross.aarch64-multiplatform.callPackage ./build.nix { };
             static = pkgs.pkgsStatic.callPackage ./build.nix { };
           };
 
