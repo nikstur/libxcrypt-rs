@@ -11,6 +11,7 @@ license = "MIT"
 homepage = "https://github.com/nikstur/libcxcrypt-rs"
 repository = "https://github.com/nikstur/libcxcrypt-rs"
 readme = "README.md"
+keywords = [ "hashing", "password", "phf", "libxcrypt", "crypt" ]
 
 [workspace.lints.clippy]
 all = { level = "deny", priority = -1 }

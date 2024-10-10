@@ -1,6 +1,6 @@
 # libxcrypt-rs
 
-Rust bindings for libxcrypt
+Rust bindings for [libxcrypt](https://github.com/besser82/libxcrypt)
 
 ## Usage
 
