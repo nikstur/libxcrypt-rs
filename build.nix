@@ -7,7 +7,7 @@
 let
   cargoToml = builtins.fromTOML (builtins.readFile ./xcrypt/Cargo.toml);
 in
-rustPlatform.buildRustPackage rec {
+rustPlatform.buildRustPackage {
   pname = "libxcypt-rs";
   inherit (cargoToml.package) version;
 
@@ -28,12 +28,6 @@ rustPlatform.buildRustPackage rec {
   buildInputs = [
     libxcrypt
   ];
-
-  env = {
-    LIBXCRYPT_INCLUDE_DIR = "${libxcrypt}/include";
-  };
-
-  passthru.envVars = env;
 
   meta = with lib; {
     homepage = "https://github.com/nikstur/libxcrypt-rs";

@@ -106,7 +106,7 @@
             env = {
               # rust-analyzer
               RUST_SRC_PATH = "${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}";
-            } // config.packages.libxcrypt-rs.envVars;
+            };
 
           };
 
