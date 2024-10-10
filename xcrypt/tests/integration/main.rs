@@ -17,14 +17,16 @@ fn crypt_phrase_invalid_setting() {
     assert!(crypt("hello", "$").is_err());
 }
 
+/// This tests a weird edge case where an errno is set by some other function.
+#[test]
+fn fail_then_succeed() {
+    assert!(crypt("hello", "$").is_err());
+    assert!(crypt_gensalt(Some("$7$"), 0, None).is_ok());
+}
+
 #[test]
 fn gensalt_and_crypt() -> Result<()> {
-    let strong_hashing_methods = [
-        "$y$", "$gy$",
-        // Somehow crypt_r returns ENOMEM for scrypt, which it really shouldn't
-        // "$7$",
-        "$2b$", "$6$",
-    ];
+    let strong_hashing_methods = ["$y$", "$gy$", "$7$", "$2b$", "$6$"];
     for hashing_method in strong_hashing_methods {
         let setting = crypt_gensalt(Some(hashing_method), 0, None)?;
         let hashed_phrase = crypt("hello", &setting)?;

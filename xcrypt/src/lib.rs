@@ -113,9 +113,9 @@ pub fn crypt_gensalt(
             output_len,
         );
 
-        let last_os_error = io::Error::last_os_error();
-        if let Some(errno) = last_os_error.raw_os_error() {
-            if errno > 0 {
+        if settings_ptr.is_null() {
+            let last_os_error = io::Error::last_os_error();
+            if let Some(errno) = last_os_error.raw_os_error() {
                 let error = match errno {
                     22 /* EINVAL */  => Error::invalid_argument("Invalid prefix, count, or random_bytes"),
                     88 /* ENOSYS */ | 13 /* EACCESS */ | 5 /* EIO */ => Error::RngNotAvailable,
@@ -155,9 +155,9 @@ pub fn crypt(phrase: &str, setting: &str) -> Result<String, Error> {
         let hashed_phrase_ptr =
             xcrypt_sys::crypt_r(c_phrase.as_ptr(), c_setting.as_ptr(), &mut crypt_data);
 
-        let last_os_error = io::Error::last_os_error();
-        if let Some(errno) = last_os_error.raw_os_error() {
-            if errno > 0 {
+        if hashed_phrase_ptr.is_null() {
+            let last_os_error = io::Error::last_os_error();
+            if let Some(errno) = last_os_error.raw_os_error() {
                 let error = match errno {
                     22 /* EINVAL */  => Error::invalid_argument("Invalid setting"),
                     34 /* ERANGE */ => Error::PhraseTooLong,
