@@ -38,10 +38,10 @@ fn gensalt_and_crypt() -> Result<()> {
 #[test]
 fn crypt_gensalt_deterministic() -> Result<()> {
     let mut n = 0x1234_5678_9789_0123_5678_9012u128;
-    let mut random_bytes: Vec<i8> = Vec::new();
+    let mut random_bytes: Vec<u8> = Vec::new();
     while n > 9 {
         let rest = n % 10;
-        random_bytes.push(rest as i8);
+        random_bytes.push(rest as u8);
         n /= 10;
     }
     random_bytes.push(n.try_into()?);

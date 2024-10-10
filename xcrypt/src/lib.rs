@@ -21,7 +21,7 @@
 //! ```
 
 use std::{
-    ffi::{CStr, CString},
+    ffi::{c_char, CStr, CString},
     fmt, io,
 };
 
@@ -76,7 +76,7 @@ impl Error {
 pub fn crypt_gensalt(
     prefix: Option<&str>,
     count: u64,
-    random_bytes: Option<&[i8]>,
+    random_bytes: Option<&[u8]>,
 ) -> Result<String, Error> {
     let c_prefix = prefix
         .map(|s| CString::new(s).map_err(|_| Error::invalid_argument("Prefix contains NULL byte")))
@@ -87,7 +87,7 @@ pub fn crypt_gensalt(
     };
 
     let rbytes_ptr = match &random_bytes {
-        Some(rb) => rb.as_ptr(),
+        Some(rb) => rb.as_ptr().cast::<c_char>(),
         None => std::ptr::null(),
     };
     let nrbytes = random_bytes

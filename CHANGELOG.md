@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.0 (unreleased)
+
+### Fixed
+
+- Fixed compilation on targets where `c_char` is not represented by `i8` but by
+  `u8`, e.g. aarch64.
+
 ## 0.2.0
 
 ### Fixed
