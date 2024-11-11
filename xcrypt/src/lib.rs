@@ -103,6 +103,12 @@ pub fn crypt_gensalt(
         )
     })?;
 
+    let count = count.try_into().map_err(|_| {
+        Error::invalid_argument(
+            "count argument out of range",
+        )
+    })?;
+
     let c_settings = unsafe {
         let settings_ptr = xcrypt_sys::crypt_gensalt_rn(
             c_prefix_ptr,
