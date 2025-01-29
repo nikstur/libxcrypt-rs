@@ -21,7 +21,7 @@
 //! ```
 
 use std::{
-    ffi::{c_char, CStr, CString},
+    ffi::{c_char, c_ulong, CStr, CString},
     fmt, io,
 };
 
@@ -75,7 +75,7 @@ impl Error {
 /// threads at the same time.
 pub fn crypt_gensalt(
     prefix: Option<&str>,
-    count: u64,
+    count: c_ulong,
     random_bytes: Option<&[u8]>,
 ) -> Result<String, Error> {
     let c_prefix = prefix
