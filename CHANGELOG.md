@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.1
+
+### Fixed
+
+- Fixed compilation on targets where `c_ulong` is not represented by `u64`,
+  e.g. 32 bit systems.
+
 ## 0.3.0
 
 ### Fixed
