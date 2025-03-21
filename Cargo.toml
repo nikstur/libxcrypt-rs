@@ -8,8 +8,8 @@ resolver = "2"
 [workspace.package]
 edition = "2021"
 license = "MIT"
-homepage = "https://github.com/nikstur/libcxcrypt-rs"
-repository = "https://github.com/nikstur/libcxcrypt-rs"
+homepage = "https://github.com/nikstur/libxcrypt-rs"
+repository = "https://github.com/nikstur/libxcrypt-rs"
 readme = "README.md"
 keywords = [ "hashing", "password", "phf", "libxcrypt", "crypt" ]
 
