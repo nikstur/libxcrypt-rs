@@ -132,6 +132,41 @@ pub fn crypt_gensalt(
     Ok(c_settings.to_string_lossy().to_string())
 }
 
+/// The `crypt_data` for `crypt_r()`.
+///
+/// Allocates memory on the heap as `crypt_data` is quite large at 32KiB.
+///
+/// Zeroes the memory as per the instructions from `crypt(3)`.
+struct CryptData {
+    ptr: *mut u8,
+    layout: Layout,
+}
+
+impl CryptData {
+    fn new() -> Self {
+        unsafe {
+            let layout = Layout::new::<xcrypt_sys::crypt_data>();
+            let ptr = alloc_zeroed(layout);
+            if ptr.is_null() {
+                handle_alloc_error(layout);
+            }
+            Self { ptr, layout }
+        }
+    }
+
+    fn as_ptr(&self) -> *mut xcrypt_sys::crypt_data {
+        self.ptr.cast::<xcrypt_sys::crypt_data>()
+    }
+}
+
+impl Drop for CryptData {
+    fn drop(&mut self) {
+        unsafe {
+            dealloc(self.ptr, self.layout);
+        }
+    }
+}
+
 /// Irreversibly hash `phrase` for storage in the system password database (shadow(5)) using a
 /// cryptographic hashing method.
 ///
@@ -144,19 +179,11 @@ pub fn crypt(phrase: &str, setting: &str) -> Result<String, Error> {
         CString::new(setting).map_err(|_| Error::invalid_argument("Setting contains NULL byte"))?;
 
     let hashed_phrase = unsafe {
-        // Allocate crypt_data on the heap because it's quite large at 32KiB
-        // Zero it as per the instructions from crypt(3)
-        let crypt_data_layout = Layout::new::<xcrypt_sys::crypt_data>();
-        let crypt_data_ptr = alloc_zeroed(crypt_data_layout);
-        if crypt_data_ptr.is_null() {
-            handle_alloc_error(crypt_data_layout);
-        }
+        // This is dropped when the unsafe block is exited
+        let crypt_data = CryptData::new();
 
-        let hashed_phrase_ptr = xcrypt_sys::crypt_r(
-            c_phrase.as_ptr(),
-            c_setting.as_ptr(),
-            crypt_data_ptr.cast::<xcrypt_sys::crypt_data>(),
-        );
+        let hashed_phrase_ptr =
+            xcrypt_sys::crypt_r(c_phrase.as_ptr(), c_setting.as_ptr(), crypt_data.as_ptr());
 
         if hashed_phrase_ptr.is_null() {
             let last_os_error = io::Error::last_os_error();
@@ -170,14 +197,9 @@ pub fn crypt(phrase: &str, setting: &str) -> Result<String, Error> {
             }
         }
 
-        let hashed_phrase = CStr::from_ptr(hashed_phrase_ptr)
+        CStr::from_ptr(hashed_phrase_ptr)
             .to_string_lossy()
-            .to_string();
-
-        // Explicitly deallocate the memory because it won't be done automatically
-        dealloc(crypt_data_ptr, crypt_data_layout);
-
-        hashed_phrase
+            .to_string()
     };
     Ok(hashed_phrase)
 }
