@@ -6,7 +6,7 @@ members = [
 resolver = "2"
 
 [workspace.package]
-edition = "2021"
+edition = "2024"
 license = "MIT"
 homepage = "https://github.com/nikstur/libxcrypt-rs"
 repository = "https://github.com/nikstur/libxcrypt-rs"

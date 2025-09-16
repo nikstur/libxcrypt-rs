@@ -21,8 +21,8 @@
 //! ```
 
 use std::{
-    alloc::{alloc_zeroed, dealloc, handle_alloc_error, Layout},
-    ffi::{c_char, c_ulong, CStr, CString},
+    alloc::{Layout, alloc_zeroed, dealloc, handle_alloc_error},
+    ffi::{CStr, CString, c_char, c_ulong},
     fmt, io,
 };
 
