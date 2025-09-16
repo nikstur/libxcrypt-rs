@@ -12,4 +12,4 @@ homepage.workspace = true
 repository.workspace = true
 
 [build-dependencies]
-bindgen = "0.70.1"
+bindgen = "0.72.1"
