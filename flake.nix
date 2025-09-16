@@ -99,6 +99,7 @@
               pkgs.cargo-bloat
               pkgs.cargo-deny
               pkgs.cargo-cyclonedx
+              pkgs.cargo-valgrind
               pkgs.rust-bindgen
             ];
 
