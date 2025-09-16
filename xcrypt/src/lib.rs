@@ -21,6 +21,7 @@
 //! ```
 
 use std::{
+    alloc::{alloc_zeroed, dealloc, handle_alloc_error, Layout},
     ffi::{c_char, c_ulong, CStr, CString},
     fmt, io,
 };
@@ -33,7 +34,7 @@ pub enum Error {
     PhraseTooLong,
     /// No random number generator is available on the platform.
     RngNotAvailable,
-    /// An unknown IO error occured.
+    /// An unknown IO error occurred.
     IoError(io::Error),
 }
 
@@ -137,23 +138,25 @@ pub fn crypt_gensalt(
 /// Internally, this calls `crypt_r` so that this function can be safely called from multiple
 /// threads at the same time.
 pub fn crypt(phrase: &str, setting: &str) -> Result<String, Error> {
-    let mut crypt_data = xcrypt_sys::crypt_data {
-        output: [0; xcrypt_sys::CRYPT_OUTPUT_SIZE as usize],
-        setting: [0; xcrypt_sys::CRYPT_OUTPUT_SIZE as usize],
-        input: [0; xcrypt_sys::CRYPT_MAX_PASSPHRASE_SIZE as usize],
-        initialized: 0,
-        reserved: [0; xcrypt_sys::CRYPT_DATA_RESERVED_SIZE as usize],
-        internal: [0; xcrypt_sys::CRYPT_DATA_INTERNAL_SIZE as usize],
-    };
-
     let c_phrase =
         CString::new(phrase).map_err(|_| Error::invalid_argument("Phrase contains NULL byte"))?;
     let c_setting =
         CString::new(setting).map_err(|_| Error::invalid_argument("Setting contains NULL byte"))?;
 
-    let c_hashed_phrase = unsafe {
-        let hashed_phrase_ptr =
-            xcrypt_sys::crypt_r(c_phrase.as_ptr(), c_setting.as_ptr(), &mut crypt_data);
+    let hashed_phrase = unsafe {
+        // Allocate crypt_data on the heap because it's quite large at 32KiB
+        // Zero it as per the instructions from crypt(3)
+        let crypt_data_layout = Layout::new::<xcrypt_sys::crypt_data>();
+        let crypt_data_ptr = alloc_zeroed(crypt_data_layout);
+        if crypt_data_ptr.is_null() {
+            handle_alloc_error(crypt_data_layout);
+        }
+
+        let hashed_phrase_ptr = xcrypt_sys::crypt_r(
+            c_phrase.as_ptr(),
+            c_setting.as_ptr(),
+            crypt_data_ptr.cast::<xcrypt_sys::crypt_data>(),
+        );
 
         if hashed_phrase_ptr.is_null() {
             let last_os_error = io::Error::last_os_error();
@@ -167,7 +170,14 @@ pub fn crypt(phrase: &str, setting: &str) -> Result<String, Error> {
             }
         }
 
-        CStr::from_ptr(hashed_phrase_ptr)
+        let hashed_phrase = CStr::from_ptr(hashed_phrase_ptr)
+            .to_string_lossy()
+            .to_string();
+
+        // Explicitly deallocate the memory because it won't be done automatically
+        dealloc(crypt_data_ptr, crypt_data_layout);
+
+        hashed_phrase
     };
-    Ok(c_hashed_phrase.to_string_lossy().to_string())
+    Ok(hashed_phrase)
 }
