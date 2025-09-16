@@ -22,3 +22,11 @@ fn main() {
     println!("{hashed_phrase}");
 }
 ```
+
+## Contributing
+
+You should run `cargo-valgrind` on the tests to ensure we do not leak memory:
+
+```
+cargo valgrind tests
+```
