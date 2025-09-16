@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.3.2 (unreleased)
+## 0.3.2
 
 - Fixed memory allocation of `crypt()`. The internal `crypt_data` is now
   allocated on the heap instead of the stack to avoid the possibilities of
