@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: samueldr/lix-gha-installer-action@v2025-10-27
-      - uses: DeterminateSystems/magic-nix-cache-action@v14
+      - uses: DeterminateSystems/magic-nix-cache-action@v15
         with:
           diagnostic-endpoint: ""
       - run: nix flake check --log-format raw-with-logs -L
