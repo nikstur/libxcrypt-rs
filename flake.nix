@@ -17,7 +17,7 @@
       flake = false;
     };
 
-    pre-commit-hooks-nix = {
+    pre-commit = {
       url = "github:cachix/pre-commit-hooks.nix";
       inputs = {
         nixpkgs.follows = "nixpkgs";
@@ -37,14 +37,12 @@
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = import systems;
 
-      imports = [ inputs.pre-commit-hooks-nix.flakeModule ];
+      imports = [ inputs.pre-commit.flakeModule ];
 
       perSystem =
         {
           config,
-          system,
           pkgs,
-          lib,
           ...
         }:
         {
@@ -77,7 +75,7 @@
 
             settings = {
               hooks = {
-                nixfmt-rfc-style.enable = true;
+                nixfmt.enable = true;
                 statix.enable = true;
               };
             };
